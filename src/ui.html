@@ -9,20 +9,107 @@
                 const message = {
                     oldName: document.querySelector('input#oldName').value,
                     newName: document.querySelector('input#newName').value,
+                    isVariant: document.querySelector('input#variant').checked
                 };
 
                 parent.postMessage({ pluginMessage: JSON.stringify(message) }, '*');
             });
         }
     </script>
+    <style>
+        body {
+            color: var(--figma-color-text);
+            background: var(--figma-color-bg);
+            font-family: Inter, sans-serif;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        label {
+            display: block;
+        }
+
+        input[type="text"] {
+            border: 1px solid var(--figma-color-border);
+            border-radius: 2px;
+            background: var(--figma-color-bg);
+            color: var(--figma-color-text);
+            font-size: 14px;
+            padding: 4px;
+
+            &:focus {
+                outline: 2px solid var(--figma-color-border-onselected);
+            }
+        }
+
+        input[type="checkbox"] {
+            width: fit-content;
+            padding: 8px;
+            border-radius: 2px;
+            background: var(--figma-color-bg);
+            color: var(--figma-color-text);
+
+            &:focus {
+                outline: 2px solid var(--figma-color-border-onselected);
+            }
+        }
+
+        button {
+            width: fit-content;
+            border: 1px solid transparent;
+            border-radius: 2px;
+            background: var(--figma-color-bg-brand);
+            color: var(--figma-color-text-onbrand);
+            font-size: 14px;
+            padding: 8px 16px;
+            cursor: pointer;
+            align-self: flex-end;
+            min-width: 96px;
+
+            &:hover {
+                background: var(--figma-color-bg-brand-hover);
+            }
+
+            &:active {
+                background: var(--figma-color-bg-brand-pressed);
+            }
+
+            &:focus {
+                outline: 2px solid var(--figma-color-border-onselected-strong);
+            }
+        }
+
+        .field:has(input[type="checkbox"]) {
+            flex-direction: row;
+            align-items: center;
+        }
+    </style>
 </head>
 
 <body>
-    <label for="oldName">Old property name</label>
-    <input type="text" id="oldName" />
-    <label for="newName">New property name</label>
-    <input type="text" id="newName" />
-    <button>Run</button>
+    <div class="field">
+        <label for="oldName">Old property name</label>
+        <input type="text" id="oldName" />
+    </div>
+    <div class="field">
+        <label for="newName">New property name</label>
+        <input type="text" id="newName" />
+    </div>
+    <div class="field">
+        <label for="variant">Is variant name</label>
+        <input type="checkbox" id="variant" />
+    </div>
+    <div class="field">
+        <button>Run</button>
+    </div>
 </body>
 
 </html>
