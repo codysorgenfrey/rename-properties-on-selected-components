@@ -2,16 +2,13 @@
   "name": "Rename properties on selected components",
   "id": "1382135556933124840",
   "api": "1.0.0",
-  "main": "code.js",
+  "main": "dist/index.js",
   "capabilities": [],
   "enableProposedApi": false,
   "documentAccess": "dynamic-page",
-  "editorType": [
-    "figma"
-  ],
+  "editorType": ["figma"],
   "networkAccess": {
-    "allowedDomains": [
-      "none"
-    ]
-  }
+    "allowedDomains": ["none"]
+  },
+  "ui": "src/ui.html"
 }

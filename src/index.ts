@@ -1,22 +1,26 @@
-// This plugin creates 5 rectangles on the screen.
-const numberOfRectangles = 5
+figma.showUI(__html__, { themeColors: true });
 
-// This file holds the main code for plugins. Code in this file has access to
-// the *figma document* via the figma global object.
-// You can access browser APIs in the <script> tag inside "ui.html" which has a
-// full browser environment (See https://www.figma.com/plugin-docs/how-plugins-run).
+declare type MessageValues = {
+  oldName: string;
+  newName: string;
+};
 
-const nodes: SceneNode[] = [];
-for (let i = 0; i < numberOfRectangles; i++) {
-  const rect = figma.createRectangle();
-  rect.x = i * 150;
-  rect.fills = [{type: 'SOLID', color: {r: 1, g: 0.5, b: 0}}];
-  figma.currentPage.appendChild(rect);
-  nodes.push(rect);
-}
-figma.currentPage.selection = nodes;
-figma.viewport.scrollAndZoomIntoView(nodes);
+figma.ui.onmessage = (message) => {
+  const values: MessageValues = JSON.parse(message);
 
-// Make sure to close the plugin when you're done. Otherwise the plugin will
-// keep running, which shows the cancel button at the bottom of the screen.
-figma.closePlugin();
+  // Get the current selection
+  const selection = figma.currentPage.selection;
+
+  // Check if there is a selection
+  if (selection.length === 0) {
+    figma.closePlugin('Please select at least one master component.');
+  }
+
+  // Check if the selection contains only master components
+  const hasMasterComponents = selection.every(
+    (node) => node.type === 'COMPONENT' || node.type === 'COMPONENT_SET'
+  );
+  if (!hasMasterComponents) {
+    figma.closePlugin('Please select only master components.');
+  }
+};

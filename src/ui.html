@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Rename properties on selected components</title>
+    <script>
+        window.onload = () => {
+            document.querySelector('button').addEventListener('click', (e) => {
+                const message = {
+                    oldName: document.querySelector('input#oldName').value,
+                    newName: document.querySelector('input#newName').value,
+                };
+
+                parent.postMessage({ pluginMessage: JSON.stringify(message) }, '*');
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <label for="oldName">Old property name</label>
+    <input type="text" id="oldName" />
+    <label for="newName">New property name</label>
+    <input type="text" id="newName" />
+    <button>Run</button>
+</body>
+
+</html>
