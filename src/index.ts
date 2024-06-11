@@ -1,4 +1,4 @@
-figma.showUI(__html__, { themeColors: true, width: 300, height: 188});
+figma.showUI(__html__, { themeColors: true, width: 300, height: 188 });
 
 declare type MessageValues = {
   oldName: string;
@@ -13,8 +13,8 @@ function renameProperties(
   // Get the properties of the component
   const properties = node.componentPropertyDefinitions;
   if (!properties) {
-    figma.notify('No properties found in the component.', { error: true });
-    return -1;
+    console.error('No properties found in the component.');
+    return false;
   }
 
   // Find the internal property id to rename
@@ -25,10 +25,8 @@ function renameProperties(
     }
   });
   if (!propertyId) {
-    figma.notify(`Property ${oldName} not found in ${node.name}`, {
-      error: true,
-    });
-    return -1;
+    console.error(`Property ${oldName} not found in ${node.name}`);
+    return false;
   }
 
   // Rename the property
@@ -36,7 +34,7 @@ function renameProperties(
     name: newName,
   });
 
-  return 0;
+  return true;
 }
 
 figma.ui.onmessage = (message) => {
@@ -61,26 +59,25 @@ figma.ui.onmessage = (message) => {
   // Loop through the selection and rename the properties
   selection.forEach((node) => {
     if (node.type === 'COMPONENT') {
-      success += renameProperties(node as ComponentNode, values);
-      processedNodes.push(node.name);
+      if (renameProperties(node as ComponentNode, values))
+        processedNodes.push(node.name);
+      else skippedNodes.push(node.name);
     } else if (node.type === 'COMPONENT_SET') {
       if (values.isVariant) {
         const children = (node as ComponentSetNode).children;
         children.forEach((child) => {
           child.name = child.name.replace(values.oldName, values.newName);
         });
+        processedNodes.push(node.name);
       } else {
-        success += renameProperties(node as ComponentSetNode, values);
+        if (renameProperties(node as ComponentSetNode, values))
+          processedNodes.push(node.name);
+        else skippedNodes.push(node.name);
       }
-      processedNodes.push(node.name);
     } else {
       skippedNodes.push(node.name);
     }
   });
-
-  if (success === -1) {
-    return;
-  }
 
   figma.notify(
     `Renamed properties for ${processedNodes.length} components. Skipped ${skippedNodes.length} objects.`
