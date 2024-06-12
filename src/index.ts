@@ -108,6 +108,7 @@ figma.ui.onmessage = (message) => {
       else skippedNodes.push(node.name);
     } else if (node.type === 'COMPONENT_SET') {
       if (values.isVariant) {
+        // TODO: auto-detect if it's a variant
         const children = (node as ComponentSetNode).children;
         children.forEach((child: SceneNode) => {
           selectedRename(child, values);
