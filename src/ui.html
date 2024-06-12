@@ -32,8 +32,41 @@
             font-size: 14px;
             padding: 4px;
 
+            &:hover {
+                background: var(--figma-color-bg-hover);
+                cursor: text;
+            }
+
+            &:active {
+                background: var(--figma-color-bg-pressed);
+            }
+
             &:focus {
-                outline: 2px solid var(--figma-color-border-onselected);
+                border: 1px solid var(--figma-color-border-brand-strong);
+                outline: 1px solid var(--figma-color-border-brand-strong);;
+            }
+        }
+
+        select {
+            border: 1px solid var(--figma-color-border);
+            border-radius: 2px;
+            background: var(--figma-color-bg);
+            color: var(--figma-color-text);
+            font-size: 14px;
+            padding: 4px;
+
+            &:hover {
+                background: var(--figma-color-bg-hover);
+                cursor: pointer;
+            }
+
+            &:active {
+                background: var(--figma-color-bg-pressed);
+            }
+
+            &:focus {
+                border: 1px solid var(--figma-color-border-brand-strong);
+                outline: 1px solid var(--figma-color-border-brand-strong);;
             }
         }
 
@@ -83,6 +116,7 @@
         window.onload = () => {
             document.querySelector('button').addEventListener('click', (e) => {
                 const message = {
+                    mode: document.querySelector('select#mode').value,
                     oldName: document.querySelector('input#oldName').value,
                     newName: document.querySelector('input#newName').value,
                     isVariant: document.querySelector('input#variant').checked
@@ -95,6 +129,13 @@
 </head>
 
 <body>
+    <div class="field">
+        <label for="mode">Mode</label>
+        <select id="mode">
+            <option value="rename" selected>Rename</option>
+            <option value="delete">Delete</option>
+        </select>
+    </div>
     <div class="field">
         <label for="oldName">Old property name</label>
         <input type="text" id="oldName" />
