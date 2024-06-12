@@ -54,7 +54,6 @@ figma.ui.onmessage = (message) => {
   // Arrays to store the nodes that were skipped and processed
   const skippedNodes: string[] = [];
   const processedNodes: string[] = [];
-  let success = 0;
 
   // Loop through the selection and rename the properties
   selection.forEach((node) => {

@@ -2,7 +2,7 @@
   "name": "Rename properties on selected components",
   "id": "1382135556933124840",
   "api": "1.0.0",
-  "main": "dist/index.js",
+  "main": "index.js",
   "capabilities": [],
   "enableProposedApi": false,
   "documentAccess": "dynamic-page",
@@ -10,5 +10,5 @@
   "networkAccess": {
     "allowedDomains": ["none"]
   },
-  "ui": "src/ui.html"
+  "ui": "ui.html"
 }

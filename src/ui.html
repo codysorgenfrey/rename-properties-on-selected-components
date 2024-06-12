@@ -3,19 +3,6 @@
 
 <head>
     <title>Rename properties on selected components</title>
-    <script>
-        window.onload = () => {
-            document.querySelector('button').addEventListener('click', (e) => {
-                const message = {
-                    oldName: document.querySelector('input#oldName').value,
-                    newName: document.querySelector('input#newName').value,
-                    isVariant: document.querySelector('input#variant').checked
-                };
-
-                parent.postMessage({ pluginMessage: JSON.stringify(message) }, '*');
-            });
-        }
-    </script>
     <style>
         body {
             color: var(--figma-color-text);
@@ -92,6 +79,19 @@
             align-items: center;
         }
     </style>
+    <script>
+        window.onload = () => {
+            document.querySelector('button').addEventListener('click', (e) => {
+                const message = {
+                    oldName: document.querySelector('input#oldName').value,
+                    newName: document.querySelector('input#newName').value,
+                    isVariant: document.querySelector('input#variant').checked
+                };
+
+                parent.postMessage({ pluginMessage: JSON.stringify(message) }, '*');
+            });
+        }
+    </script>
 </head>
 
 <body>
