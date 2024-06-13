@@ -1,21 +1,20 @@
-figma.showUI(__html__, { themeColors: true, width: 300, height: 248 });
+figma.showUI(__html__, { themeColors: true, width: 300, height: 218 });
 
 declare type MessageValues = {
   mode: 'rename' | 'delete';
   oldName: string;
   newName: string;
-  isVariant: boolean;
 };
 
-function renameProperties(
+function getPropertyId(
   node: ComponentNode | ComponentSetNode,
-  { oldName, newName }: MessageValues
+  oldName: string
 ) {
   // Get the properties of the component
   const properties = node.componentPropertyDefinitions;
   if (!properties) {
     console.error('No properties found in the component.');
-    return false;
+    return;
   }
 
   // Find the internal property id to rename
@@ -27,8 +26,18 @@ function renameProperties(
   });
   if (!propertyId) {
     console.error(`Property ${oldName} not found in ${node.name}`);
-    return false;
+    return;
   }
+
+  return propertyId;
+}
+
+function renameProperties(
+  node: ComponentNode | ComponentSetNode,
+  { oldName, newName }: MessageValues
+) {
+  const propertyId = getPropertyId(node, oldName);
+  if (!propertyId) return false;
 
   // Rename the property
   node.editComponentProperty(propertyId, {
@@ -42,24 +51,8 @@ function deleteProperty(
   node: ComponentNode | ComponentSetNode,
   { oldName }: Partial<MessageValues>
 ) {
-  // Get the properties of the component
-  const properties = node.componentPropertyDefinitions;
-  if (!properties) {
-    console.error('No properties found in the component.');
-    return false;
-  }
-
-  // Find the internal property id to rename
-  let propertyId: string | undefined;
-  Object.keys(properties).forEach((key) => {
-    if (key.startsWith(`${oldName}#`) || key === oldName) {
-      propertyId = key;
-    }
-  });
-  if (!propertyId) {
-    console.error(`Property ${oldName} not found in ${node.name}`);
-    return false;
-  }
+  const propertyId = getPropertyId(node, oldName!);
+  if (!propertyId) return false;
 
   // Delete the property
   node.deleteComponentProperty(propertyId);
@@ -73,8 +66,28 @@ function replaceInName(node: SceneNode, { oldName, newName }: MessageValues) {
 }
 
 function deleteInName(node: SceneNode, { oldName }: Partial<MessageValues>) {
-  // TODO: use regex to remove the property and it's value
-  node.name = node.name.replace(oldName!, '');
+  const variants = node.name.split(', ');
+  variants.forEach((variant, index) => {
+    if (variant.includes(`${oldName}=`)) {
+      variants.splice(index, 1);
+    }
+  });
+
+  node.name = variants.join(', ');
+  return true;
+}
+
+function isPropertyOfVariant(node: ComponentSetNode, oldName: string) {
+  if (!node.children) return false;
+
+  return node.children.some((child) => {
+    if (child.name.includes(`${oldName}=`)) return true;
+  });
+}
+
+function isPropertyOfComponentSet(node: ComponentSetNode, oldName: string) {
+  const propertyId = getPropertyId(node, oldName);
+  if (!propertyId) return false;
   return true;
 }
 
@@ -107,16 +120,14 @@ figma.ui.onmessage = (message) => {
         processedNodes.push(node.name);
       else skippedNodes.push(node.name);
     } else if (node.type === 'COMPONENT_SET') {
-      if (values.isVariant) {
-        // TODO: auto-detect if it's a variant
-        const children = (node as ComponentSetNode).children;
-        children.forEach((child: SceneNode) => {
+      if (isPropertyOfVariant(node, values.oldName)) {
+        node.children.forEach((child) => {
           selectedRename(child, values);
         });
         processedNodes.push(node.name);
-      } else {
-        if (selectedAction(node as ComponentSetNode, values))
-          processedNodes.push(node.name);
+      }
+      if (isPropertyOfComponentSet(node, values.oldName)) {
+        if (selectedAction(node, values)) processedNodes.push(node.name);
         else skippedNodes.push(node.name);
       }
     } else {

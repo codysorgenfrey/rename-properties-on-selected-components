@@ -1,5 +1,5 @@
 {
-  "name": "Rename properties on selected components",
+  "name": "Edit properties on selected components",
   "id": "1382135556933124840",
   "api": "1.0.0",
   "main": "index.js",

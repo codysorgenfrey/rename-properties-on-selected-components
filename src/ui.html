@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Rename properties on selected components</title>
+    <title>Edit properties on selected components</title>
     <style>
         body {
             color: var(--figma-color-text);
@@ -43,7 +43,8 @@
 
             &:focus {
                 border: 1px solid var(--figma-color-border-brand-strong);
-                outline: 1px solid var(--figma-color-border-brand-strong);;
+                outline: 1px solid var(--figma-color-border-brand-strong);
+                ;
             }
         }
 
@@ -66,7 +67,8 @@
 
             &:focus {
                 border: 1px solid var(--figma-color-border-brand-strong);
-                outline: 1px solid var(--figma-color-border-brand-strong);;
+                outline: 1px solid var(--figma-color-border-brand-strong);
+                ;
             }
         }
 
@@ -119,10 +121,20 @@
                     mode: document.querySelector('select#mode').value,
                     oldName: document.querySelector('input#oldName').value,
                     newName: document.querySelector('input#newName').value,
-                    isVariant: document.querySelector('input#variant').checked
                 };
 
                 parent.postMessage({ pluginMessage: JSON.stringify(message) }, '*');
+            });
+
+            document.querySelector('select#mode').addEventListener('change', (e) => {
+                const mode = e.target.value;
+                const newName = document.querySelector('.field:has(input#newName)');
+
+                if (mode === 'rename') {
+                    newName.style.display = 'flex';
+                } else {
+                    newName.style.display = 'none';
+                }
             });
         }
     </script>
@@ -143,10 +155,6 @@
     <div class="field">
         <label for="newName">New property name</label>
         <input type="text" id="newName" />
-    </div>
-    <div class="field">
-        <label for="variant">Is variant name</label>
-        <input type="checkbox" id="variant" />
     </div>
     <div class="field">
         <button>Run</button>
